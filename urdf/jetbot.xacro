@@ -1,0 +1,139 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="robot">
+
+  <xacro:property name="M_PI" value="3.1415926535897931" />
+
+  <!-- Dimension Macros -->
+  <xacro:property name="degrees_45" value="0.785398163"/>
+  <xacro:property name="degrees_90" value="1.57079633"/>
+
+  <xacro:property name="track" value="0.1136" />
+  <xacro:property name="wheel_diam" value="0.067" />
+  <xacro:property name="wheel_width" value="0.0135" />
+  <xacro:property name="ball_diam" value="0.0254" />
+  <xacro:property name="ball_x" value="-0.08" />
+  <xacro:property name="tag_plate_size" value="0.08" />
+  <xacro:property name="tag_plate_t" value="0.0015" />
+  <xacro:property name="tag_plate_z" value="0.132" />
+  <xacro:property name="camera_x" value="0.019" />
+  <xacro:property name="camera_z" value="0.057" />
+  <xacro:property name="camera_incl" value="20" />
+  <xacro:property name="vl53l1x_x" value="0.035" />
+  <xacro:property name="vl53l1x_z" value="0.008" />
+
+
+  <material name="Black">
+    <color rgba="0 0 0 1.0"/>
+  </material>
+
+  <material name="Gray">
+    <color rgba="0.5 0.5 0.5 1.0"/>
+  </material>
+
+  <material name="White">
+    <color rgba="1 1 1 1.0"/>
+  </material>
+
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <box size="0.136 0.09 0.027"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="-0.031 0 0"/>
+      <material name="Gray"/>
+    </visual>
+    <visual>
+      <geometry>
+        <sphere radius="${ball_diam/2}"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="${ball_x} 0 ${-((wheel_diam/2)-(ball_diam/2))}"/>
+      <!-- Bug? -->
+      <material name="White1">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <link name="right_wheel">
+    <visual>
+      <geometry>
+        <cylinder length="${wheel_width}" radius="${wheel_diam/2}"/>
+      </geometry>
+      <origin rpy="${degrees_90} 0 0" xyz="0 0 0"/>
+      <material name="Black"/>
+    </visual>
+  </link>
+
+  <link name="left_wheel">
+    <visual>
+      <geometry>
+        <cylinder length="${wheel_width}" radius="${wheel_diam/2}"/>
+      </geometry>
+      <origin rpy="${degrees_90} 0 0" xyz="0 0 0"/>
+      <material name="Black"/>
+    </visual>
+  </link>
+
+  <link name="tag_plate">
+    <visual>
+      <geometry>
+        <box size="${tag_plate_size} ${tag_plate_size} ${tag_plate_t}"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 -${tag_plate_t/2}"/>
+      <material name="White"/>
+    </visual>
+  </link>
+
+  <link name="camera">
+    <visual>
+      <geometry>
+        <box size="0.01 0.01 0.01"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <material name="White"/>
+    </visual>
+  </link>
+
+  <link name="vl53l1x">
+    <visual>
+      <geometry>
+        <box size="0.01 0.01 0.01"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <material name="White"/>
+    </visual>
+  </link>
+
+  <joint name="base_to_right_wheel" type="continuous">
+    <axis xyz="0 1 0" />
+    <parent link="base_link" />
+    <child link="right_wheel" />
+    <origin xyz="0 ${-track/2} 0" rpy="0 0 0" />
+  </joint>
+
+  <joint name="base_to_left_wheel" type="continuous">
+    <axis xyz="0 1 0" />
+    <parent link="base_link" />
+    <child link="left_wheel" />
+    <origin xyz="0 ${track/2} 0" rpy="0 0 0" />
+  </joint>
+
+  <joint name="base_to_tag_plate" type="fixed">
+    <origin xyz="0 0 ${tag_plate_z}" rpy="0 0 0" />
+    <parent link="base_link"/>
+    <child link="tag_plate" />
+  </joint>
+
+  <joint name="base_to_camera" type="fixed">
+    <origin xyz="${camera_x} 0 ${camera_z}" rpy="0 ${camera_incl*M_PI/180} 0" />
+    <parent link="base_link"/>
+    <child link="camera" />
+  </joint>
+
+  <joint name="base_to_vl53l1x" type="fixed">
+    <origin xyz="${vl53l1x_x} 0 ${vl53l1x_z}" rpy="0 0 0" />
+    <parent link="base_link"/>
+    <child link="vl53l1x" />
+  </joint>
+
+</robot>
